@@ -5,7 +5,7 @@ const BananaModel = ({ position }) => {
   const { scene } = useGLTF('/banana_toon/scene.gltf');
 
   return (
-    <Gltf src="/banana_toon/scene.gltf" scale={10} object={scene} position={position} />
+    <Gltf src="/banana_toon/scene.gltf" scale={2} object={scene} position={position} />
   );
 }
 

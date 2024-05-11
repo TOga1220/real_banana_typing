@@ -1,6 +1,4 @@
-import * as THREE from 'three';
 import React, { useState, useEffect } from 'react';
-import { createBoxGeometry, createBoxMaterial, createBoxMesh, getRandomColor } from '../utils/three-utils';
 import { Canvas } from '@react-three/fiber';
 import ScoreBoard from '../components/ScoreBoard';
 import GameBoard from '../components/GameBoard';
@@ -10,25 +8,22 @@ import BananaModel from '../components/BananaModel';
 
 
 const GameScene = () => {
-    // Three.jsのシーン、カメラ、レンダラーを状態として管理
-    const [scene, setScene] = useState(null);
-    const [camera, setCamera] = useState(null);
-    const [renderer, setRenderer] = useState(null);
+
     // 立方体のオブジェクトの状態を管理
     const [objects, setObjects] = useState([]);
     // スコアの状態を管理
     const [score, setScore] = useState(0);
 
-
+    // キーボード入力を受け取る処理
     useEffect(() => {
       const handleTyping = (event) => {
+        // キーボードの「a」キーが押されたら、ランダムな位置に立方体を追加
         if (event.key === 'a') {
-          const position = [Math.random() * 4 - 2, Math.random() * 4 - 2, Math.random() * 4 - 2];
+          const position = [Math.random() * 20 - 10, Math.random() * 20 - 10, Math.random() * 20 - 10];
           setObjects([...objects, { position }]);
           setScore(score + 1);
         }
       };
-  
       window.addEventListener('keydown', handleTyping);
   
       return () => {
@@ -37,12 +32,11 @@ const GameScene = () => {
     }, [objects, score]);
 
     return (
-      <div>
-        <ScoreBoard score={score} />
+      <div id="canvas-container">
         <GameBoard />
-        <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
-          <ambientLight intensity={0.5} />
-          <pointLight position={[10, 10, 10]} />
+        <ScoreBoard score={score} />
+        <Canvas camera={{ position: [0, 0, 10] }}>
+          <ambientLight intensity={1} />
           <OrbitControls />
           {objects.map((obj, index) => (
             <BananaModel key={index} position={obj.position} />
@@ -50,6 +44,6 @@ const GameScene = () => {
         </Canvas>
       </div>
     );
-  };
+};
 
 export default GameScene;
