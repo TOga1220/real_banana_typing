@@ -1,9 +1,10 @@
 import './App.css';
+import GameScene from './scenes/GameScene';
 
 function App() {
   return (
     <div className="App">
-      <p>helloworld</p>
+      <GameScene />
     </div>
   );
 }
