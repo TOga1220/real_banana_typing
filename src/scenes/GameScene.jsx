@@ -4,17 +4,9 @@ import { createBoxGeometry, createBoxMaterial, createBoxMesh, getRandomColor } f
 import { Canvas } from '@react-three/fiber';
 import ScoreBoard from '../components/ScoreBoard';
 import GameBoard from '../components/GameBoard';
+import { OrbitControls } from '@react-three/drei';
+import BananaModel from '../components/BananaModel';
 
-
-// 立方体のメッシュをレンダリングするコンポーネント
-const Cubes = ({ objects }) => {
-    return objects.map((obj, index) => (
-      <mesh key={index} position={obj.position}>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshBasicMaterial color={obj.color} />
-      </mesh>
-    ));
-  };
 
 
 const GameScene = () => {
@@ -29,61 +21,34 @@ const GameScene = () => {
 
 
     useEffect(() => {
-        // Three.jsのシーン、カメラ、レンダラーを作成
-        const sceneInstance = new THREE.Scene();
-        const cameraInstance = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const rendererInstance = new THREE.WebGLRenderer();
-
-        
-        // 状態を更新
-        setScene(sceneInstance);
-        setCamera(cameraInstance);
-        setRenderer(rendererInstance);
-
-        // キーボードイベントのハンドラ
-        const handleTyping = (event) => {
-            // 'a'キーが押された場合
-            if (event.key === 'a') {
-            // 立方体のジオメトリ、マテリアル、メッシュを作成
-            const geometry = createBoxGeometry();
-            const material = createBoxMaterial(getRandomColor());
-            const cube = createBoxMesh(geometry, material);
-            // 立方体の位置をランダムに設定
-            const position = [Math.random() * 4 - 2, Math.random() * 4 - 2, Math.random() * 4 - 2];
-            cube.position.set(...position);
-            // 立方体をシーンに追加
-            sceneInstance.add(cube);
-            // 立方体のデータを状態に追加
-            setObjects([...objects, { mesh: cube, position, color: material.color.getHex() }]);
-            // スコアを増加
-            setScore(score + 1);
-            }
-        };
-
-        // キーボードイベントを追加
-        window.addEventListener('keydown', handleTyping);
-
-
-        // コンポーネントがアンマウントされたときの処理
-        return () => {
-            // キーボードイベントのリスナーを解除
-            window.removeEventListener('keydown', handleTyping);
-            // レンダラーのリソースを解放
-            rendererInstance.dispose();
-        };
+      const handleTyping = (event) => {
+        if (event.key === 'a') {
+          const position = [Math.random() * 4 - 2, Math.random() * 4 - 2, Math.random() * 4 - 2];
+          setObjects([...objects, { position }]);
+          setScore(score + 1);
+        }
+      };
+  
+      window.addEventListener('keydown', handleTyping);
+  
+      return () => {
+        window.removeEventListener('keydown', handleTyping);
+      };
     }, [objects, score]);
 
     return (
-        <div>
-            <ScoreBoard score={score} />
-            <GameBoard />
-            {/* Three.jsのキャンバスをレンダリング */}
-            <Canvas>
-            <ambientLight intensity={0.5} />
-            <pointLight position={[10, 10, 10]} />
-            <Cubes objects={objects} />
-            </Canvas>
-        </div>
+      <div>
+        <ScoreBoard score={score} />
+        <GameBoard />
+        <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
+          <ambientLight intensity={0.5} />
+          <pointLight position={[10, 10, 10]} />
+          <OrbitControls />
+          {objects.map((obj, index) => (
+            <BananaModel key={index} position={obj.position} />
+          ))}
+        </Canvas>
+      </div>
     );
   };
 
